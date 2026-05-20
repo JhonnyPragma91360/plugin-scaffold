@@ -31,7 +31,10 @@ public class Handler {
     public Mono<ServerResponse> listenGETOtherUseCase(ServerRequest serverRequest) {
         // useCase2.logic();
         // Retornamos una respuesta HTTP 200 con un cuerpo vacío, ya que este método es solo un ejemplo para mostrar cómo se pueden manejar diferentes casos de uso en el mismo handler
-        return ServerResponse.ok().bodyValue("");
+        
+        String id = serverRequest.queryParam("id").orElse("0");
+        
+        return ServerResponse.ok().bodyValue("hOLA OTRA RUTA");
     }
 
     public Mono<ServerResponse> listenPOSTUseCase(ServerRequest serverRequest) {
