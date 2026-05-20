@@ -4,6 +4,7 @@ import co.com.bancolombia.api.dto.RegisterAccountDto;
 import co.com.bancolombia.model.account.Account;
 import co.com.bancolombia.model.exceptions.BusinessException;
 import co.com.bancolombia.model.exceptions.message.BusinnessErrorMessage;
+import co.com.bancolombia.usecase.getstatus.GetStatusUseCase;
 import co.com.bancolombia.usecase.registeraccount.RegisterAccountUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,7 @@ public class Handler {
 
     // incialmente se inyectan los casos de uso que se van a usar en el handler, luego se crean los métodos para cada endpoint y se llama al caso de uso correspondiente
     private final RegisterAccountUseCase registerAccountUseCase;
+    private final GetStatusUseCase getStatusUseCase;
 
     public Mono<ServerResponse> listenGETUseCase(ServerRequest serverRequest) {
         // useCase.logic();
@@ -32,9 +34,12 @@ public class Handler {
         // useCase2.logic();
         // Retornamos una respuesta HTTP 200 con un cuerpo vacío, ya que este método es solo un ejemplo para mostrar cómo se pueden manejar diferentes casos de uso en el mismo handler
         
-        String id = serverRequest.queryParam("id").orElse("0");
-        
-        return ServerResponse.ok().bodyValue("hOLA OTRA RUTA");
+        String id = serverRequest.queryParam("id").orElse("response");
+        System.out.println("ID: " + id);
+
+        return getStatusUseCase.getStatus(id)
+                .flatMap(status -> ServerResponse.ok().bodyValue(status))
+                .switchIfEmpty(ServerResponse.notFound().build());
     }
 
     public Mono<ServerResponse> listenPOSTUseCase(ServerRequest serverRequest) {
